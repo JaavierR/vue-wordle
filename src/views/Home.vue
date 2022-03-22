@@ -10,6 +10,10 @@ const currentGuess = computed(() =>
     currentRow.value.map((tile) => tile.letter).join('')
 )
 
+const remainingGuesses = computed(
+    () => board.value.length - currentRowIndex.value - 1
+)
+
 const board = ref(
     Array.from({ length: 3 }, () => {
         return Array.from({ length: 3 }, () => new Tile())
@@ -36,40 +40,43 @@ const fillTile = (letter: string) => {
     }
 }
 
-const refreshTileStatusCurrentRow = () => {
-    currentRow.value.forEach((tile, index) => {
-        tile.state = theWord.includes(tile.letter) ? 'present' : 'absent'
-
-        if (currentGuess.value[index] === theWord[index]) {
-            tile.state = 'correct'
+const emptyTile = () => {
+    for (const tile of [...currentRow.value].reverse()) {
+        if (tile.letter) {
+            tile.empty()
+            break
         }
-    })
+    }
 }
 
 const submitGuess = () => {
-    let guessesAllowed = board.value.length
     let guess = currentGuess.value
 
     if (guess.length < theWord.length) return
 
-    refreshTileStatusCurrentRow()
+    for (const tile of currentRow.value) {
+        tile.updateStatus(currentGuess.value, theWord)
+    }
 
     if (guess === theWord) {
-        showMessage('You win')
-    } else if (guessesAllowed === currentRowIndex.value + 1) {
-        showMessage('Game over. You lose')
         state.value = 'completed'
-    } else {
-        showMessage('NOPE')
-        currentRowIndex.value++
+        return showMessage('You win')
     }
+
+    if (!remainingGuesses.value) {
+        state.value = 'completed'
+        return showMessage('Game over. You lose')
+    }
+
+    currentRowIndex.value++
+    return showMessage('NOPE')
 }
 
 const onKey = (key: string) => {
     if (/^[a-zA-Z]$/.test(key)) {
         fillTile(key)
     } else if (key === 'Backspace') {
-        console.log('remove')
+        emptyTile()
     } else if (key === 'Enter') {
         submitGuess()
     }
@@ -86,7 +93,7 @@ onBeforeUnmount(() => window.removeEventListener('keyup', onKeyPress))
             <template v-for="row in board" :key="row">
                 <div class="row">
                     <template v-for="tile in row" :key="tile">
-                        <div class="tile" :class="tile.state">
+                        <div class="tile" :class="tile.status">
                             {{ tile.letter }}
                         </div>
                     </template>

@@ -1,10 +1,10 @@
 export default class Tile {
     letter: string
-    state: string
+    status: string
 
-    constructor(letter = '', state = '') {
+    constructor(letter = '', status = '') {
         this.letter = letter
-        this.state = state
+        this.status = status
     }
 
     fill(key: string) {
@@ -13,5 +13,16 @@ export default class Tile {
 
     empty() {
         this.letter = ''
+    }
+
+    updateStatus(currentGuess: string, theWord: string) {
+        this.status = theWord.includes(this.letter) ? 'present' : 'absent'
+
+        const correctGuess =
+            currentGuess.indexOf(this.letter) === theWord.indexOf(this.letter)
+
+        if (correctGuess) {
+            this.status = 'correct'
+        }
     }
 }
