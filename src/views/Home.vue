@@ -90,8 +90,13 @@ onBeforeUnmount(() => window.removeEventListener('keyup', onKeyPress))
 <template>
     <main>
         <div id="game">
-            <template v-for="row in board" :key="row">
-                <div class="row">
+            <template v-for="(row, index) in board" :key="row">
+                <div
+                    class="row"
+                    :class="{
+                        current: currentRowIndex === index,
+                    }"
+                >
                     <template v-for="tile in row" :key="tile">
                         <div class="tile" :class="tile.status">
                             {{ tile.letter }}

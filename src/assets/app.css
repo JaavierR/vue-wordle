@@ -1,3 +1,10 @@
+:root {
+    --correct-color: #47d747;
+    --present-color: #f7f749;
+    --absent-color: #888;
+    --invalid-color: #ff3f3f;
+}
+
 html,
 body {
     height: 100%;
@@ -6,48 +13,87 @@ body {
 body {
     display: grid;
     place-items: center;
-    background: rgb(37, 37, 37);
+    background: #0e1626;
     color: white;
-    font-family: sans-serif;
+    margin: 0;
+    font-family: Poppins, sans-serif;
 }
 
-/* #game {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-} */
-
-.tile.absent {
-    background: gray;
+#game {
+    color: white;
+    background-image: linear-gradient(153deg, #1c2b45 13%, #0c1321 85%),
+        linear-gradient(149deg, #fec63b 3%, rgba(254, 198, 59, 0) 800%);
+    position: relative;
+    border-radius: 20px;
+    width: 300px;
+    margin: auto;
 }
 
-.tile.present {
-    background: yellow;
-}
-
-.tile.correct {
-    background: green;
+#game:before {
+    content: '';
+    display: block;
+    position: absolute;
+    inset: -7px;
+    background-image: linear-gradient(138deg, #6ba0e2 -20%, #131e32 105%);
+    z-index: -1;
+    border-radius: 25px;
 }
 
 .row {
     display: flex;
+    justify-content: center;
+}
+
+.row.current .tile:empty:first-of-type {
+    animation: fade 2s;
+    animation-fill-mode: both;
+    animation-iteration-count: infinite;
+}
+
+@keyframes fade {
+    50% {
+        background: rgba(255, 255, 255, 0.05);
+    }
 }
 
 .tile {
+    outline: 1px solid rgba(73, 110, 158, 0.1);
     width: 100px;
     height: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
-    outline: 1px solid currentColor;
     font-size: 2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #496e9e;
+}
+
+/* .tile.absent {
+    background: var(--absent-color);
+} */
+
+.tile.present {
+    color: var(--present-color);
+    text-shadow: 0 0 12px rgba(246, 171, 38, 0.42);
+}
+
+.tile.correct {
+    color: var(--correct-color);
+    text-shadow: 0 0 12px rgba(38, 246, 100, 0.42);
 }
 
 output {
-    font-size: 1.3rem;
     text-align: center;
-    display: block;
-    margin-top: 1.5rem;
+    font-weight: 500;
+    font-style: italic;
+    font-size: 1.3rem;
+    margin-top: 1rem;
     position: fixed;
-    bottom: 1rem;
-    right: 1rem;
+    inset: auto 0 3rem 0;
+}
+
+output:empty {
+    display: none;
+    color: #496e9e;
 }
