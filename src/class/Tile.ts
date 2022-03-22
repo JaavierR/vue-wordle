@@ -1,3 +1,5 @@
+type LetterStatus = 'correct' | 'present' | 'absent'
+
 export default class Tile {
     letter: string
     status: string
@@ -9,9 +11,13 @@ export default class Tile {
         this.position = position
     }
 
-    static updateStatusesForRow(row: Tile[], theWord: string) {
+    static updateStatusesForRow(
+        row: Tile[],
+        theWord: string,
+        keyStatus: Record<string, LetterStatus>
+    ) {
         for (const tile of row) {
-            tile.updateStatus(theWord)
+            tile.updateStatus(theWord, keyStatus)
         }
 
         row.filter(
@@ -20,7 +26,10 @@ export default class Tile {
                 row.some(
                     (t) => t.letter === tile.letter && t.status === 'correct'
                 )
-        ).forEach((tile) => (tile.status = 'absent'))
+        ).forEach((tile) => {
+            // keyStatus[tile.letter] = 'absent'
+            tile.status = 'absent'
+        })
     }
 
     fill(key: string) {
@@ -31,15 +40,18 @@ export default class Tile {
         this.letter = ''
     }
 
-    updateStatus(theWord: string) {
+    updateStatus(theWord: string, keyStatus: Record<string, LetterStatus>) {
         if (!theWord.includes(this.letter)) {
+            keyStatus[this.letter] = 'absent'
             return (this.status = 'absent')
         }
 
         if (this.letter === theWord[this.position]) {
+            keyStatus[this.letter] = 'correct'
             return (this.status = 'correct')
         }
 
-        this.status = 'present'
+        keyStatus[this.letter] = 'present'
+        return (this.status = 'present')
     }
 }

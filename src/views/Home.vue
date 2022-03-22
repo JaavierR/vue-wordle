@@ -2,6 +2,8 @@
 import Tile from '@/class/Tile'
 import words from '@/data/words'
 
+type LetterStates = 'correct' | 'absent' | 'present'
+
 const theWord = 'cat'
 const state = ref('active')
 const errors = ref(false)
@@ -16,6 +18,8 @@ const letters = ref([
     'ASDFGHJKL'.split(''),
     ['Enter', ...'ZXCVBNM'.split(''), 'Backspace'],
 ])
+
+const letterStates = ref<Record<string, LetterStates>>({})
 
 const remainingGuesses = computed(
     () => board.value.length - currentRowIndex.value - 1
@@ -36,10 +40,7 @@ const showMessage = (msg: string, time = 1000) => {
     }
 }
 
-const onKeyPress = (e: KeyboardEvent) => {
-    errors.value = false
-    onKey(e.key)
-}
+const onKeyPress = (e: KeyboardEvent) => onKey(e.key)
 
 const fillTile = (letter: string) => {
     for (const tile of currentRow.value) {
@@ -69,7 +70,7 @@ const submitGuess = () => {
         return showMessage('Invalid word...')
     }
 
-    Tile.updateStatusesForRow(currentRow.value, theWord)
+    Tile.updateStatusesForRow(currentRow.value, theWord, letterStates.value)
 
     if (guess === theWord) {
         state.value = 'completed'
@@ -86,6 +87,9 @@ const submitGuess = () => {
 }
 
 const onKey = (key: string) => {
+    errors.value = false
+    if (state.value === 'completed') return
+
     if (/^[a-zA-Z]$/.test(key)) {
         fillTile(key)
     } else if (key === 'Backspace') {
@@ -136,7 +140,31 @@ const virtualKey = (e: Event) => {
             <template v-for="row in letters" :key="row">
                 <div class="row">
                     <template v-for="key in row" :key="key">
-                        <button type="button" class="key">{{ key }}</button>
+                        <button
+                            type="button"
+                            class="key"
+                            :class="letterStates[key.toLowerCase()]"
+                        >
+                            <svg
+                                v-if="key === 'Backspace'"
+                                id="backspace"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z"
+                                />
+                            </svg>
+
+                            <template v-else>
+                                {{ key }}
+                            </template>
+                        </button>
                     </template>
                 </div>
             </template>
