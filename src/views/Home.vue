@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import Tile from '@/class/Tile'
+import words from '@/data/words'
 
 const theWord = 'cat'
 const state = ref('active')
+const errors = ref(false)
 const message = ref('')
 const currentRowIndex = ref(0)
 const currentRow = computed(() => board.value[currentRowIndex.value])
@@ -29,7 +31,10 @@ const showMessage = (msg: string, time = 1000) => {
     }
 }
 
-const onKeyPress = (e: KeyboardEvent) => onKey(e.key)
+const onKeyPress = (e: KeyboardEvent) => {
+    errors.value = false
+    onKey(e.key)
+}
 
 const fillTile = (letter: string) => {
     for (const tile of currentRow.value) {
@@ -53,6 +58,11 @@ const submitGuess = () => {
     let guess = currentGuess.value
 
     if (guess.length < theWord.length) return
+
+    if (!words.includes(guess)) {
+        errors.value = true
+        return showMessage('Invalid word...')
+    }
 
     for (const tile of currentRow.value) {
         tile.updateStatus(currentGuess.value, theWord)
@@ -95,6 +105,7 @@ onBeforeUnmount(() => window.removeEventListener('keyup', onKeyPress))
                     class="row"
                     :class="{
                         current: currentRowIndex === index,
+                        invalid: currentRowIndex === index && errors,
                     }"
                 >
                     <template v-for="tile in row" :key="tile">
