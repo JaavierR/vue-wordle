@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import Tile from '@/class/Tile'
 
-let currentTileIndex = 0
+const theWord = 'cat'
 const currentRowIndex = ref(0)
 const currentRow = computed(() => board.value[currentRowIndex.value])
+const currentGuess = computed(() =>
+    currentRow.value.map((tile) => tile.letter).join('')
+)
 
 const board = ref(
     Array.from({ length: 3 }, () => {
@@ -14,19 +17,24 @@ const board = ref(
 const onKeyPress = (e: KeyboardEvent) => onKey(e.key)
 
 const fillTile = (letter: string) => {
-    // board.value[currentRowIndex.value][currentTileIndex] = letter
     for (const tile of currentRow.value) {
         if (!tile.letter) {
             tile.fill(letter)
             break
         }
     }
+}
 
-    if (currentTileIndex === board.value[0].length - 1) {
-        currentRowIndex.value++
-        currentTileIndex = 0
+const submitGuess = () => {
+    let guess = currentGuess.value
+
+    if (guess.length < theWord.length) return
+
+    if (guess === theWord) {
+        alert('You win')
     } else {
-        currentTileIndex++
+        alert('NOPE')
+        currentRowIndex.value++
     }
 }
 
@@ -35,6 +43,8 @@ const onKey = (key: string) => {
         fillTile(key)
     } else if (key === 'Backspace') {
         console.log('remove')
+    } else if (key === 'Enter') {
+        submitGuess()
     }
 }
 
