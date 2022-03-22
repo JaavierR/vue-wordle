@@ -2,6 +2,8 @@
 import Tile from '@/class/Tile'
 
 const theWord = 'cat'
+const state = ref('active')
+const message = ref('')
 const currentRowIndex = ref(0)
 const currentRow = computed(() => board.value[currentRowIndex.value])
 const currentGuess = computed(() =>
@@ -13,6 +15,15 @@ const board = ref(
         return Array.from({ length: 3 }, () => new Tile())
     })
 )
+
+const showMessage = (msg: string, time = 1000) => {
+    message.value = msg
+    if (time > 0) {
+        setTimeout(() => {
+            message.value = ''
+        }, time)
+    }
+}
 
 const onKeyPress = (e: KeyboardEvent) => onKey(e.key)
 
@@ -26,14 +37,18 @@ const fillTile = (letter: string) => {
 }
 
 const submitGuess = () => {
+    let guessesAllowed = board.value.length
     let guess = currentGuess.value
 
     if (guess.length < theWord.length) return
 
     if (guess === theWord) {
-        alert('You win')
+        showMessage('You win')
+    } else if (guessesAllowed === currentRowIndex.value + 1) {
+        showMessage('Game over. You lose')
+        state.value = 'completed'
     } else {
-        alert('NOPE')
+        showMessage('NOPE')
         currentRowIndex.value++
     }
 }
@@ -54,13 +69,18 @@ onBeforeUnmount(() => window.removeEventListener('keyup', onKeyPress))
 </script>
 
 <template>
-    <div id="game">
-        <template v-for="row in board" :key="row">
-            <div class="row">
-                <template v-for="tile in row" :key="tile">
-                    <div class="tile">{{ tile.letter }}</div>
-                </template>
-            </div>
-        </template>
-    </div>
+    <main>
+        <div id="game">
+            <template v-for="row in board" :key="row">
+                <div class="row">
+                    <template v-for="tile in row" :key="tile">
+                        <div class="tile">{{ tile.letter }}</div>
+                    </template>
+                </div>
+            </template>
+        </div>
+        <output>
+            {{ message }}
+        </output>
+    </main>
 </template>

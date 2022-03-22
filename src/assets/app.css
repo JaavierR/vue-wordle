@@ -26,6 +26,16 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    outline: 1px solid white;
+    outline: 1px solid currentColor;
     font-size: 2rem;
+}
+
+output {
+    font-size: 1.3rem;
+    text-align: center;
+    display: block;
+    margin-top: 1.5rem;
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
 }

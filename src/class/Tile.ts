@@ -1,10 +1,10 @@
 export default class Tile {
     letter: string
-    status: string
+    state: string
 
-    constructor(letter = '', status = '') {
+    constructor(letter = '', state = '') {
         this.letter = letter
-        this.status = status
+        this.state = state
     }
 
     fill(key: string) {
