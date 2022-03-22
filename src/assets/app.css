@@ -69,18 +69,45 @@ body {
     color: #496e9e;
 }
 
-/* .tile.absent {
-    background: var(--absent-color);
-} */
+#keyboard {
+    margin-top: 2rem;
+}
+
+.key {
+    background: #c5c5c5;
+    border: 0;
+    margin: 2px;
+    height: 50px;
+    min-width: 40px;
+    border-radius: 4px;
+}
+
+.row.invalid .tile,
+.tile.invalid {
+    color: var(--invalid-color);
+    text-shadow: 0 0 12px rgba(38, 246, 110, 0.42);
+}
+
+.tile.correct {
+    color: var(--correct-color);
+    text-shadow: 0 0 12px rgba(38, 246, 100, 0.42);
+}
+
+.key.correct {
+    background: var(--correct-color);
+}
 
 .tile.present {
     color: var(--present-color);
     text-shadow: 0 0 12px rgba(246, 171, 38, 0.42);
 }
 
-.tile.correct {
-    color: var(--correct-color);
-    text-shadow: 0 0 12px rgba(38, 246, 100, 0.42);
+.key.present {
+    background: var(--present-color);
+}
+
+.key.absent {
+    background: var(--absent-color);
 }
 
 output {
