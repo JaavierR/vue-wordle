@@ -11,6 +11,11 @@ const currentRow = computed(() => board.value[currentRowIndex.value])
 const currentGuess = computed(() =>
     currentRow.value.map((tile) => tile.letter).join('')
 )
+const letters = ref([
+    'QWERTYUIOP'.split(''),
+    'ASDFGHJKL'.split(''),
+    ['Enter', ...'ZXCVBNM'.split(''), 'Backspace'],
+])
 
 const remainingGuesses = computed(
     () => board.value.length - currentRowIndex.value - 1
@@ -93,10 +98,22 @@ const onKey = (key: string) => {
 window.addEventListener('keyup', onKeyPress)
 
 onBeforeUnmount(() => window.removeEventListener('keyup', onKeyPress))
+
+const virtualKey = (e: Event) => {
+    const target = e.target as HTMLButtonElement
+
+    if (target.matches('button')) {
+        const virtualLetter = target.textContent || ''
+        onKey(virtualLetter)
+    }
+}
 </script>
 
 <template>
     <main>
+        <output>
+            {{ message }}
+        </output>
         <div id="game">
             <template v-for="(row, index) in board" :key="row">
                 <div
@@ -114,8 +131,15 @@ onBeforeUnmount(() => window.removeEventListener('keyup', onKeyPress))
                 </div>
             </template>
         </div>
-        <output>
-            {{ message }}
-        </output>
+
+        <div id="keyboard" @click.stop="virtualKey">
+            <template v-for="row in letters" :key="row">
+                <div class="row">
+                    <template v-for="key in row" :key="key">
+                        <button type="button" class="key">{{ key }}</button>
+                    </template>
+                </div>
+            </template>
+        </div>
     </main>
 </template>
