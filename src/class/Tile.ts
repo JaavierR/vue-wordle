@@ -1,10 +1,26 @@
 export default class Tile {
     letter: string
     status: string
+    position: number
 
-    constructor(letter = '', status = '') {
+    constructor(position: number, letter = '', status = '') {
         this.letter = letter
         this.status = status
+        this.position = position
+    }
+
+    static updateStatusesForRow(row: Tile[], theWord: string) {
+        for (const tile of row) {
+            tile.updateStatus(theWord)
+        }
+
+        row.filter(
+            (tile) =>
+                tile.status === 'present' &&
+                row.some(
+                    (t) => t.letter === tile.letter && t.status === 'correct'
+                )
+        ).forEach((tile) => (tile.status = 'absent'))
     }
 
     fill(key: string) {
@@ -15,14 +31,15 @@ export default class Tile {
         this.letter = ''
     }
 
-    updateStatus(currentGuess: string, theWord: string) {
-        this.status = theWord.includes(this.letter) ? 'present' : 'absent'
-
-        const correctGuess =
-            currentGuess.indexOf(this.letter) === theWord.indexOf(this.letter)
-
-        if (correctGuess) {
-            this.status = 'correct'
+    updateStatus(theWord: string) {
+        if (!theWord.includes(this.letter)) {
+            return (this.status = 'absent')
         }
+
+        if (this.letter === theWord[this.position]) {
+            return (this.status = 'correct')
+        }
+
+        this.status = 'present'
     }
 }

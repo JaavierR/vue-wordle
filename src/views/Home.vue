@@ -18,7 +18,7 @@ const remainingGuesses = computed(
 
 const board = ref(
     Array.from({ length: 3 }, () => {
-        return Array.from({ length: 3 }, () => new Tile())
+        return Array.from({ length: 3 }, (_, index) => new Tile(index))
     })
 )
 
@@ -64,9 +64,7 @@ const submitGuess = () => {
         return showMessage('Invalid word...')
     }
 
-    for (const tile of currentRow.value) {
-        tile.updateStatus(currentGuess.value, theWord)
-    }
+    Tile.updateStatusesForRow(currentRow.value, theWord)
 
     if (guess === theWord) {
         state.value = 'completed'
