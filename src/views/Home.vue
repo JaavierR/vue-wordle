@@ -36,11 +36,23 @@ const fillTile = (letter: string) => {
     }
 }
 
+const refreshTileStatusCurrentRow = () => {
+    currentRow.value.forEach((tile, index) => {
+        tile.state = theWord.includes(tile.letter) ? 'present' : 'absent'
+
+        if (currentGuess.value[index] === theWord[index]) {
+            tile.state = 'correct'
+        }
+    })
+}
+
 const submitGuess = () => {
     let guessesAllowed = board.value.length
     let guess = currentGuess.value
 
     if (guess.length < theWord.length) return
+
+    refreshTileStatusCurrentRow()
 
     if (guess === theWord) {
         showMessage('You win')
@@ -74,7 +86,9 @@ onBeforeUnmount(() => window.removeEventListener('keyup', onKeyPress))
             <template v-for="row in board" :key="row">
                 <div class="row">
                     <template v-for="tile in row" :key="tile">
-                        <div class="tile">{{ tile.letter }}</div>
+                        <div class="tile" :class="tile.state">
+                            {{ tile.letter }}
+                        </div>
                     </template>
                 </div>
             </template>

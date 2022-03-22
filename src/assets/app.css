@@ -16,6 +16,18 @@ body {
     grid-template-columns: repeat(3, 1fr);
 } */
 
+.tile.absent {
+    background: gray;
+}
+
+.tile.present {
+    background: yellow;
+}
+
+.tile.correct {
+    background: green;
+}
+
 .row {
     display: flex;
 }
