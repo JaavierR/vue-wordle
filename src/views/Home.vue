@@ -1,26 +1,29 @@
 <script setup lang="ts">
-const gameInfo = {
-    guessesAllowed: 3,
-    wordLength: 3,
-}
+import Tile from '@/class/Tile'
 
 let currentTileIndex = 0
-let currentRowIndex = 0
+const currentRowIndex = ref(0)
+const currentRow = computed(() => board.value[currentRowIndex.value])
 
 const board = ref(
-    Array.from({ length: gameInfo.guessesAllowed }, () => {
-        return Array.from({ length: gameInfo.wordLength }, () => '')
+    Array.from({ length: 3 }, () => {
+        return Array.from({ length: 3 }, () => new Tile())
     })
 )
 
 const onKeyPress = (e: KeyboardEvent) => onKey(e.key)
 
 const fillTile = (letter: string) => {
-    board.value[currentRowIndex][currentTileIndex] = letter
-    console.log({ letter, board })
+    // board.value[currentRowIndex.value][currentTileIndex] = letter
+    for (const tile of currentRow.value) {
+        if (!tile.letter) {
+            tile.fill(letter)
+            break
+        }
+    }
 
-    if (currentTileIndex === gameInfo.wordLength - 1) {
-        currentRowIndex++
+    if (currentTileIndex === board.value[0].length - 1) {
+        currentRowIndex.value++
         currentTileIndex = 0
     } else {
         currentTileIndex++
@@ -29,7 +32,7 @@ const fillTile = (letter: string) => {
 
 const onKey = (key: string) => {
     if (/^[a-zA-Z]$/.test(key)) {
-        fillTile(key.toLowerCase())
+        fillTile(key)
     } else if (key === 'Backspace') {
         console.log('remove')
     }
@@ -45,7 +48,7 @@ onBeforeUnmount(() => window.removeEventListener('keyup', onKeyPress))
         <template v-for="row in board" :key="row">
             <div class="row">
                 <template v-for="tile in row" :key="tile">
-                    <div class="tile">{{ tile }}</div>
+                    <div class="tile">{{ tile.letter }}</div>
                 </template>
             </div>
         </template>
