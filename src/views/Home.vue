@@ -2,8 +2,6 @@
 import Tile from '@/class/Tile'
 import words from '@/data/words'
 
-type LetterStates = 'correct' | 'absent' | 'present'
-
 const theWord = 'cat'
 const state = ref('active')
 const errors = ref(false)
@@ -18,8 +16,6 @@ const letters = ref([
     'ASDFGHJKL'.split(''),
     ['Enter', ...'ZXCVBNM'.split(''), 'Backspace'],
 ])
-
-const letterStates = ref<Record<string, LetterStates>>({})
 
 const remainingGuesses = computed(
     () => board.value.length - currentRowIndex.value - 1
@@ -70,7 +66,7 @@ const submitGuess = () => {
         return showMessage('Invalid word...')
     }
 
-    Tile.updateStatusesForRow(currentRow.value, theWord, letterStates.value)
+    Tile.updateStatusesForRow(currentRow.value, theWord)
 
     if (guess === theWord) {
         state.value = 'completed'
@@ -98,6 +94,13 @@ const onKey = (key: string) => {
         submitGuess()
     }
 }
+
+const matchingTileForKey = (key: string) =>
+    board.value
+        .flat()
+        .filter((tile) => tile.status)
+        .sort((_t1: Tile, t2: Tile) => (t2.status === 'correct' ? 1 : 0))
+        .find((tile) => tile.letter === key.toLowerCase())
 
 window.addEventListener('keyup', onKeyPress)
 
@@ -143,7 +146,7 @@ const virtualKey = (e: Event) => {
                         <button
                             type="button"
                             class="key"
-                            :class="letterStates[key.toLowerCase()]"
+                            :class="matchingTileForKey(key)?.status"
                         >
                             <svg
                                 v-if="key === 'Backspace'"
