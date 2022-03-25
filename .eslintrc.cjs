@@ -16,5 +16,7 @@ module.exports = {
         'no-undef': 'off',
         '@typescript-eslint/no-unused-vars': 'off',
         'vue/multi-word-component-names': 'off',
+        'no-console': 'warn',
+        'no-debugger': 'warn',
     },
 }
