@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import Tile from '@/class/Tile'
-import words from '@/data/words'
+import { allWords, theWords } from '@/data/words'
 
-const theWord = 'Cat'.toLowerCase()
+const guessAllowed = 5
+const theWord = ref(theWords[Math.floor(Math.random() * theWords.length)])
 const state = ref('active')
 const errors = ref(false)
 const message = ref('')
 const currentRowIndex = ref(0)
+
 const currentRow = computed(() => board.value[currentRowIndex.value])
 const currentGuess = computed(() =>
     currentRow.value.map((tile) => tile.letter).join('')
@@ -17,8 +19,11 @@ const remainingGuesses = computed(
 )
 
 const board = ref(
-    Array.from({ length: 3 }, () => {
-        return Array.from({ length: 3 }, (_, index) => new Tile(index))
+    Array.from({ length: guessAllowed }, () => {
+        return Array.from(
+            { length: theWord.value.length },
+            (_, index) => new Tile(index)
+        )
     })
 )
 
@@ -52,25 +57,25 @@ const emptyTile = () => {
 }
 
 const submitGuess = () => {
-    let guess = currentGuess.value
+    let guess = currentGuess.value.toLowerCase()
 
-    if (guess.length < theWord.length) return
+    if (guess.length < theWord.value.length) return
 
-    if (!words.includes(guess)) {
+    if (!allWords.includes(guess)) {
         errors.value = true
         return showMessage('Not in word list')
     }
 
-    Tile.updateStatusesForRow(currentRow.value, theWord)
+    Tile.updateStatusesForRow(currentRow.value, theWord.value)
 
-    if (guess === theWord) {
+    if (guess === theWord.value) {
         state.value = 'completed'
         return showMessage('Genius')
     }
 
     if (!remainingGuesses.value) {
         state.value = 'completed'
-        return showMessage(theWord, 0)
+        return showMessage(theWord.value, 0)
     }
 
     currentRowIndex.value++
