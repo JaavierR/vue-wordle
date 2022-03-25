@@ -2,7 +2,7 @@
 import Tile from '@/class/Tile'
 import words from '@/data/words'
 
-const theWord = 'cat'
+const theWord = 'Cat'
 const state = ref('active')
 const errors = ref(false)
 const message = ref('')

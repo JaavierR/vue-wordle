@@ -1,9 +1,5 @@
 <script setup lang="ts">
 import type Tile from '@/class/Tile'
-// interface Tile {
-//     letter: string
-//     status: string
-// }
 
 const emit = defineEmits<{ (e: '@keyPressed', key: string): void }>()
 
