@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import type Tile from '@/class/Tile'
 
-const props =
-    defineProps<{ board: Tile[][]; currentRowIndex: number; errors: boolean }>()
+defineProps<{
+    board: Tile[][]
+    currentRowIndex: number
+    errors: boolean
+}>()
 </script>
 
 <template>

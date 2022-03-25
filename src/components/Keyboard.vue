@@ -22,13 +22,10 @@ const matchingTileForKey = (key: string) =>
 const virtualKey = (e: Event) => {
     let key = ''
     const target = e.target as HTMLButtonElement
+    const button = target.closest('button')
 
-    if (target.matches('button')) {
-        key = target.textContent || ''
-    }
-
-    if (target.matches('svg') || target.matches('path')) {
-        key = 'Backspace'
+    if (button) {
+        key = button?.dataset.key || ''
     }
 
     emit('@keyPressed', key)
@@ -47,6 +44,7 @@ const virtualKey = (e: Event) => {
                             matchingTileForKey(key)?.status,
                             (key === 'Enter' || key === 'Backspace') && 'big',
                         ]"
+                        :data-key="key"
                     >
                         <template v-if="key === 'Backspace'">
                             <svg
