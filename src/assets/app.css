@@ -78,9 +78,9 @@ body {
     color: white;
     border: 0;
     margin: 2.5px;
-    height: 50px;
-    min-width: 40px;
-    border-radius: 4px;
+    height: 3rem;
+    min-width: 2rem;
+    border-radius: 0.25rem;
     font-weight: 500;
     font-family: inherit;
     display: flex;
@@ -91,19 +91,7 @@ body {
 }
 
 .key.big {
-    min-width: 70px;
-}
-
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
+    min-width: 3.75rem;
 }
 
 .row.invalid .tile,
@@ -134,19 +122,34 @@ body {
     background: #171c29;
 }
 
-output {
+.message {
+    position: absolute;
+    z-index: 1;
+    max-width: 12rem;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 3.5rem;
+    top: 25%;
+    left: 0;
+    right: 0;
     text-align: center;
+    padding: 0.5rem 0;
+    background: linear-gradient(153deg, #0c1321 5%, #1c2b45 65%),
+        linear-gradient(149deg, #fec63b 3%, rgba(254, 198, 59, 0) 800%);
+    border-radius: 0.375rem;
+    overflow: hidden;
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+    display: block;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(51 65 85);
     font-weight: 500;
     font-style: italic;
-    font-size: 1.3rem;
-    margin-top: 1rem;
-    position: fixed;
-    inset: auto 0 3rem 0;
+    transition: opacity 0.3s ease-out;
 }
 
-output:empty {
-    display: none;
-    color: #496e9e;
+.message.v-leave-to {
+    opacity: 0;
 }
 
 #backspace {

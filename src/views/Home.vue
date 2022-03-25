@@ -11,11 +11,6 @@ const currentRow = computed(() => board.value[currentRowIndex.value])
 const currentGuess = computed(() =>
     currentRow.value.map((tile) => tile.letter).join('')
 )
-const letters = ref([
-    'QWERTYUIOP'.split(''),
-    'ASDFGHJKL'.split(''),
-    ['Enter', ...'ZXCVBNM'.split(''), 'Backspace'],
-])
 
 const remainingGuesses = computed(
     () => board.value.length - currentRowIndex.value - 1
@@ -75,7 +70,7 @@ const submitGuess = () => {
 
     if (!remainingGuesses.value) {
         state.value = 'completed'
-        return showMessage('Game over. You lose')
+        return showMessage(theWord, 0)
     }
 
     currentRowIndex.value++
@@ -95,95 +90,24 @@ const onKey = (key: string) => {
     }
 }
 
-const matchingTileForKey = (key: string) =>
-    board.value
-        .flat()
-        .filter((tile) => tile.status)
-        .sort((_t1: Tile, t2: Tile) => (t2.status === 'correct' ? 1 : 0))
-        .find((tile) => tile.letter === key.toLowerCase())
-
 window.addEventListener('keyup', onKeyPress)
 
 onBeforeUnmount(() => window.removeEventListener('keyup', onKeyPress))
-
-const virtualKey = (e: Event) => {
-    let virtualLetter = ''
-    const target = e.target as HTMLButtonElement
-
-    if (target.matches('button')) {
-        virtualLetter = target.textContent || ''
-    }
-
-    if (target.matches('svg') || target.matches('path')) {
-        virtualLetter = 'Backspace'
-    }
-
-    onKey(virtualLetter)
-}
 </script>
 
 <template>
-    <main>
-        <output>
+    <Transition>
+        <div v-if="message" class="message">
             {{ message }}
-        </output>
-        <div id="game">
-            <template v-for="(row, index) in board" :key="row">
-                <div
-                    class="row"
-                    :class="{
-                        current: currentRowIndex === index,
-                        invalid: currentRowIndex === index && errors,
-                    }"
-                >
-                    <template v-for="tile in row" :key="tile">
-                        <div class="tile" :class="tile.status">
-                            {{ tile.letter }}
-                        </div>
-                    </template>
-                </div>
-            </template>
         </div>
+    </Transition>
+    <main>
+        <Game
+            :board="board"
+            :current-row-index="currentRowIndex"
+            :errors="errors"
+        />
 
-        <div id="keyboard" @click.stop="virtualKey">
-            <template v-for="row in letters" :key="row">
-                <div class="row">
-                    <template v-for="key in row" :key="key">
-                        <button
-                            type="button"
-                            class="key"
-                            :class="[
-                                matchingTileForKey(key)?.status,
-                                (key === 'Enter' || key === 'Backspace') &&
-                                    'big',
-                            ]"
-                        >
-                            <template v-if="key === 'Backspace'">
-                                <svg
-                                    id="backspace"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                >
-                                    <title>{{ key }}</title>
-                                    <path
-                                        id="backspace"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z"
-                                    />
-                                </svg>
-                            </template>
-
-                            <template v-else>
-                                {{ key }}
-                            </template>
-                        </button>
-                    </template>
-                </div>
-            </template>
-        </div>
+        <Keyboard :board="board" @@key-pressed="onKey" />
     </main>
 </template>
