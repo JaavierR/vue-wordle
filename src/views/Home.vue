@@ -100,18 +100,20 @@ onBeforeUnmount(() => window.removeEventListener('keyup', onKeyPress))
 </script>
 
 <template>
-    <Transition>
-        <div v-if="message" class="message">
-            {{ message }}
-        </div>
-    </Transition>
-    <main>
-        <Game
-            :board="board"
-            :current-row-index="currentRowIndex"
-            :errors="errors"
-        />
+    <div id="game-wrap">
+        <Transition>
+            <div v-if="message" class="message">
+                {{ message }}
+            </div>
+        </Transition>
+        <main>
+            <Game
+                :board="board"
+                :current-row-index="currentRowIndex"
+                :errors="errors"
+            />
 
-        <Keyboard :board="board" @@key-pressed="onKey" />
-    </main>
+            <Keyboard :board="board" @@key-pressed="onKey" />
+        </main>
+    </div>
 </template>
