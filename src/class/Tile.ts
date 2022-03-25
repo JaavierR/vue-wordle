@@ -10,17 +10,34 @@ export default class Tile {
     }
 
     static updateStatusesForRow(row: Tile[], theWord: string) {
+        const word: (string | null)[] = theWord.split('')
+
+        // Check for correct letters...
         for (const tile of row) {
-            tile.updateStatus(theWord)
+            const isCorrect = word[tile.position] === tile.letter
+
+            if (isCorrect) {
+                tile.status = 'correct'
+                word[tile.position] = null
+            }
         }
 
-        row.filter(
-            (tile) =>
-                tile.status === 'present' &&
-                row.some(
-                    (t) => t.letter === tile.letter && t.status === 'correct'
-                )
-        ).forEach((tile) => (tile.status = 'absent'))
+        // Check for present letters...
+        let rowWithoutStatus = row.filter((tile) => !tile.status)
+
+        for (const tile of rowWithoutStatus) {
+            if (word.includes(tile.letter)) {
+                tile.status = 'present'
+                word[tile.position] = null
+            }
+        }
+
+        // Anything that remains is absent...
+        rowWithoutStatus = row.filter((tile) => !tile.status)
+
+        for (const tile of rowWithoutStatus) {
+            tile.status = 'absent'
+        }
     }
 
     fill(key: string) {
@@ -29,17 +46,5 @@ export default class Tile {
 
     empty() {
         this.letter = ''
-    }
-
-    updateStatus(theWord: string) {
-        if (!theWord.includes(this.letter)) {
-            return (this.status = 'absent')
-        }
-
-        if (this.letter === theWord[this.position]) {
-            return (this.status = 'correct')
-        }
-
-        return (this.status = 'present')
     }
 }
