@@ -2,7 +2,7 @@
 import Tile from '@/class/Tile'
 import words from '@/data/words'
 
-const theWord = 'Cat'
+const theWord = 'Cat'.toLowerCase()
 const state = ref('active')
 const errors = ref(false)
 const message = ref('')
@@ -58,14 +58,14 @@ const submitGuess = () => {
 
     if (!words.includes(guess)) {
         errors.value = true
-        return showMessage('Invalid word...')
+        return showMessage('Not in word list')
     }
 
     Tile.updateStatusesForRow(currentRow.value, theWord)
 
     if (guess === theWord) {
         state.value = 'completed'
-        return showMessage('You win')
+        return showMessage('Genius')
     }
 
     if (!remainingGuesses.value) {
@@ -74,7 +74,6 @@ const submitGuess = () => {
     }
 
     currentRowIndex.value++
-    return showMessage('NOPE')
 }
 
 const onKey = (key: string) => {
