@@ -27,7 +27,7 @@ const board = ref(
     })
 )
 
-const showMessage = (msg: string, time = 1000) => {
+const showMessage = (msg: string, time = 1600) => {
     message.value = msg
     if (time > 0) {
         setTimeout(() => {
@@ -107,12 +107,18 @@ window.addEventListener('keyup', onKeyPress)
 onBeforeUnmount(() => window.removeEventListener('keyup', onKeyPress))
 
 const virtualKey = (e: Event) => {
+    let virtualLetter = ''
     const target = e.target as HTMLButtonElement
 
     if (target.matches('button')) {
-        const virtualLetter = target.textContent || ''
-        onKey(virtualLetter)
+        virtualLetter = target.textContent || ''
     }
+
+    if (target.matches('svg') || target.matches('path')) {
+        virtualLetter = 'Backspace'
+    }
+
+    onKey(virtualLetter)
 }
 </script>
 
@@ -146,23 +152,30 @@ const virtualKey = (e: Event) => {
                         <button
                             type="button"
                             class="key"
-                            :class="matchingTileForKey(key)?.status"
+                            :class="[
+                                matchingTileForKey(key)?.status,
+                                (key === 'Enter' || key === 'Backspace') &&
+                                    'big',
+                            ]"
                         >
-                            <svg
-                                v-if="key === 'Backspace'"
-                                id="backspace"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z"
-                                />
-                            </svg>
+                            <template v-if="key === 'Backspace'">
+                                <svg
+                                    id="backspace"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <title>{{ key }}</title>
+                                    <path
+                                        id="backspace"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z"
+                                    />
+                                </svg>
+                            </template>
 
                             <template v-else>
                                 {{ key }}
