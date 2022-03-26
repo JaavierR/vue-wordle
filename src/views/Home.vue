@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Tile from '@/class/Tile'
-import { allWords, theWords } from '@/data/words'
+import { allWords, theWords, answers } from '@/data/words'
 
-const guessAllowed = 5
+const guessAllowed = 6
 const theWord = ref(theWords[Math.floor(Math.random() * theWords.length)])
 const state = ref('active')
 const errors = ref(false)
@@ -61,7 +61,7 @@ const submitGuess = () => {
 
     if (guess.length < theWord.value.length) return
 
-    if (!allWords.includes(guess)) {
+    if (!answers.includes(guess)) {
         errors.value = true
         return showMessage('Not in word list')
     }
