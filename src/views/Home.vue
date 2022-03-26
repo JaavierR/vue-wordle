@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import confetti from 'canvas-confetti'
 import Tile from '@/class/Tile'
 import { allWords, theWords, answers } from '@/data/words'
 
@@ -70,6 +71,7 @@ const submitGuess = () => {
 
     if (guess === theWord.value) {
         state.value = 'completed'
+        confetti()
         return showMessage('Genius')
     }
 
